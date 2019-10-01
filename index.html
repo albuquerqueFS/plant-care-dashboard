@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Application</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="http://www.chartjs.org/dist/2.7.1/Chart.js"></script>
+    <script src="http://www.chartjs.org/samples/latest/utils.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="corpo">
+        <div id="menu-lateral">
+            <img src="./img/plant-care-logo.png" alt="" id="menu-lateral__logo">
+
+            <ul>
+                <li><a href="">Estatísticas</a></li>
+                <li><a href="">Configurações</a></li>
+                <li><a href="">Sair</a></li>
+            </ul>
+
+            <a id="menu-lateral__suporte" href=""><img src="./img/phone.svg" style="margin-right: 5px;"
+                    alt="">Suporte</a>
+        </div>
+
+        <div id="grafico">
+            <div id="grafico_umidade" class="grafico__border">
+                <h1 class="grafico__titulo">Umidade Atual</h1>
+                <hr>
+                <div class="grafico__conteudo">
+                    <p>40%</p>
+                    <p style="color: rgb(255, 0, 0);">Pouca Umidade</p>
+                </div>
+            </div>
+            <div id="grafico_temperatura" class="grafico__border">
+                <h1 class="grafico__titulo">Temperatura Atual</h1>
+                <hr>
+                <div class="grafico__conteudo">
+                    <p>20.8C</p>
+                    <p style="color: rgb(0, 255, 21);">Agradável</p>
+                </div>
+            </div>
+            <div id="grafico_luminosidade" class="grafico__border">
+                <h1 class="grafico__titulo">Luminosidade Atual</h1>
+                <hr>
+                <div class="grafico__conteudo">
+                    <p>200lm</p>
+                    <p style="color: rgb(255, 123, 0);">Precisa de mais luz</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
