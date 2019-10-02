@@ -30,33 +30,62 @@
                     alt="">Suporte</a>
         </div>
 
-        <div id="grafico">
-            <div id="grafico_umidade" class="grafico__border">
-                <h1 class="grafico__titulo">Umidade Atual</h1>
-                <hr>
-                <div class="grafico__conteudo">
-                    <p>40%</p>
-                    <p style="color: rgb(255, 0, 0);">Pouca Umidade</p>
+        <div id="container-grafico">
+
+            <div id="grafico">
+                <div id="grafico_umidade" class="grafico__border">
+                    <h1 class="grafico__titulo">Umidade Atual</h1>
+                    <hr>
+                    <div class="grafico__conteudo">
+                        <p>40%</p>
+                        <p style="color: rgb(255, 0, 0);">Pouca Umidade</p>
+                    </div>
+                </div>
+                <div id="grafico_temperatura" class="grafico__border">
+                    <h1 class="grafico__titulo">Temperatura Atual</h1>
+                    <hr>
+                    <div class="grafico__conteudo">
+                        <p>20.8C</p>
+                        <p style="color: rgb(0, 255, 21);">Agradável</p>
+                    </div>
+                </div>
+                <div id="grafico_luminosidade" class="grafico__border">
+                    <h1 class="grafico__titulo">Luminosidade Atual</h1>
+                    <hr>
+                    <div class="grafico__conteudo">
+                        <p>200lm</p>
+                        <p style="color: rgb(255, 123, 0);">Precisa de mais luz</p>
+                    </div>
                 </div>
             </div>
-            <div id="grafico_temperatura" class="grafico__border">
-                <h1 class="grafico__titulo">Temperatura Atual</h1>
-                <hr>
-                <div class="grafico__conteudo">
-                    <p>20.8C</p>
-                    <p style="color: rgb(0, 255, 21);">Agradável</p>
-                </div>
-            </div>
-            <div id="grafico_luminosidade" class="grafico__border">
-                <h1 class="grafico__titulo">Luminosidade Atual</h1>
-                <hr>
-                <div class="grafico__conteudo">
-                    <p>200lm</p>
-                    <p style="color: rgb(255, 123, 0);">Precisa de mais luz</p>
-                </div>
+
+            <div id="grafico-grande">
+                <canvas id="line-chart" width="800" height="450"></canvas>
             </div>
         </div>
+
     </div>
 </body>
 
 </html>
+
+<script>
+    var chartjohnson = new Chart(document.getElementById('line-chart'), {
+        type: 'line',
+        data: {
+            labels: ['00:00', '3:00', '6:00', '9:00', '12:00', '15:00', '18:00', '21:00'],
+            datasets: [{
+                data: [12, 12, 14, 17, 16, 15, 11, 11],
+                label: "Temperatura",
+                borderColor: "#3e95cd",
+                fill: false
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Variação de temperatura ao decorrer do dia'
+            }
+        }
+    });
+</script>
