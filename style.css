@@ -96,3 +96,11 @@ html {
     text-align: center;
     line-height: 4rem;
 }
+
+#grafico-umidade {
+    margin: 20px 0px;
+}
+
+#grafico-temperatura {
+    margin: 20px 0px;
+}

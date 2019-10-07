@@ -37,7 +37,7 @@
                     <h1 class="grafico__titulo">Umidade Atual</h1>
                     <hr>
                     <div class="grafico__conteudo">
-                        <p>40%</p>
+                        <p id="umidade_sensor">00%</p>
                         <p style="color: rgb(255, 0, 0);">Pouca Umidade</p>
                     </div>
                 </div>
@@ -45,22 +45,25 @@
                     <h1 class="grafico__titulo">Temperatura Atual</h1>
                     <hr>
                     <div class="grafico__conteudo">
-                        <p>20.8C</p>
-                        <p style="color: rgb(0, 255, 21);">Agradável</p>
+                        <p id="temperatura_sensor">00.0C</p>
+                        <p style="color: rgb(255, 0, 0);">Agradável</p>
                     </div>
                 </div>
                 <div id="grafico_luminosidade" class="grafico__border">
                     <h1 class="grafico__titulo">Luminosidade Atual</h1>
                     <hr>
                     <div class="grafico__conteudo">
-                        <p>200lm</p>
-                        <p style="color: rgb(255, 123, 0);">Precisa de mais luz</p>
+                        <p>00lm</p>
+                        <p style="color: rgb(255, 0, 0);">Precisa de mais luz</p>
                     </div>
                 </div>
             </div>
 
-            <div id="grafico-grande">
-                <canvas id="line-chart" width="800" height="450"></canvas>
+            <div id="grafico-umidade">
+                <canvas id="chart"></canvas>
+            </div>
+            <div id="grafico-temperatura">
+                <canvas id="chart-temperatura"></canvas>
             </div>
         </div>
 
@@ -68,24 +71,157 @@
 </body>
 
 </html>
-
 <script>
-    var chartjohnson = new Chart(document.getElementById('line-chart'), {
+
+    var context = document.getElementById("chart").getContext("2d");
+    context.canvas.width = 1000;
+    context.canvas.height = 300;
+
+    var contextB = document.getElementById("chart-temperatura").getContext("2d");
+    contextB.canvas.width = 1000;
+    contextB.canvas.height = 300;
+
+    var configuration = {
         type: 'line',
         data: {
-            labels: ['00:00', '3:00', '6:00', '9:00', '12:00', '15:00', '18:00', '21:00'],
             datasets: [{
-                data: [12, 12, 14, 17, 16, 15, 11, 11],
                 label: "Temperatura",
-                borderColor: "#3e95cd",
-                fill: false
+                type: 'line',
+                backgroundColor: '#FF9C9C',
+                borderColor: '#381100'
             }]
         },
         options: {
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Segundos'
+                    },
+                    distribution: 'series',
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Temperature'
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            animation: {
+                duration: 0
+            },
+            hover: {
+                mode: 'index'
+            },
             title: {
                 display: true,
-                text: 'Variação de temperatura ao decorrer do dia'
+                text: 'Temperatura da planta em tempo real'
             }
         }
-    });
+    };
+
+    var configurationB = {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: "Umidade",
+                type: 'line',
+                backgroundColor: '#9CFFE7',
+                borderColor: '#002438'
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Segundos'
+                    },
+                    distribution: 'series',
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Temperature'
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            animation: {
+                duration: 0
+            },
+            hover: {
+                mode: 'index'
+            },
+            title: {
+                display: true,
+                text: 'Umidade da planta em tempo real'
+            }
+        }
+    };
+
+    var chart = new Chart(context, configuration);
+    var chartB = new Chart(contextB, configurationB);
+    //Função para obter os dados de temperatura do server
+    //Seria mais interessante fazer isso com WebSocket, porém para fins academicos, os dados serão atualizados via HTTP
+
+    //Esse atributo dentro do contexto serve para saber qual foi o último índice processado, assim eliminado os outros elementos na
+    //hora de montar/atualizar o gráfico
+    this.lastIndexTemp = 0;
+    this.time = 0;
+
+    function get_data() {
+        var http = new XMLHttpRequest();
+        http.open('GET', 'http://localhost:3000/api', false);
+        http.send(null);
+
+        var obj = JSON.parse(http.responseText);
+        if (obj.data.length == 0) {
+            return;
+        }
+        var _lastIndexTemp = this.lastIndexTemp;
+        this.lastIndexTemp = obj.data.length;
+        listTemp = obj.data.slice(_lastIndexTemp);
+        listTemp.forEach(data => {
+            //Máximo de 60 itens exibidos no gráfico
+            if (chart.data.labels.length == 10 && chart.data.datasets[0].data.length == 10) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+            chart.data.labels.push(this.time++);
+            chart.data.datasets[0].data.push(parseFloat(data));
+            chart.update();
+        });
+
+        var listUmidade = obj.dataB.slice(_lastIndexTemp);
+        listUmidade.forEach(data => {
+            //Máximo de 60 itens exibidos no gráfico
+            if (chartB.data.labels.length == 10 && chartB.data.datasets[0].data.length == 10) {
+                chartB.data.labels.shift();
+                chartB.data.datasets[0].data.shift();
+            }
+            chartB.data.labels.push(this.time++);
+            chartB.data.datasets[0].data.push(parseFloat(data));
+            chartB.update();
+        });
+
+        document.getElementById('temperatura_sensor').textContent = obj.average + 'C';
+        document.getElementById('umidade_sensor').textContent = obj.averageB + '%';
+    }
+
+    get_data();
+    setInterval(() => {
+        get_data();
+    }, 1000);
 </script>
