@@ -1,0 +1,8 @@
+/* 
+ Com uma largura mínima de 992 pixels. Monitores por exemplo.
+*/
+@media screen and (max-width: 1450px) {
+    html {
+        font-size: 15px ;
+    }
+}

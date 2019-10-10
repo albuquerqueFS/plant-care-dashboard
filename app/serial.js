@@ -4,16 +4,16 @@ const Readline = SerialPort.parsers.Readline;
 class ArduinoDataRead {
 
     constructor() {
-        this.listData = [];
-        this.listDataB = [];
+        this.listDataTemperatura = [];
+        this.listDataUmidade = [];
     }
 
-    get List() {
-        return this.listData;
+    get ListTemperatura() {
+        return this.listDataTemperatura;
     }
 
-    get ListB() {
-        return this.listDataB;
+    get ListUmidade() {
+        return this.listDataUmidade;
     }
 
     SetConnection() {
@@ -41,8 +41,8 @@ class ArduinoDataRead {
 
             parser.on('data', (data) => {
                 var result = data.split(";");
-                this.listData.push(parseFloat(result[0]));
-                this.listDataB.push(parseFloat(result[1]));
+                this.listDataTemperatura.push(parseFloat(result[0]));
+                this.listDataUmidade.push(parseFloat(result[1]));
             });
 
         }).catch(error => console.log(error));
@@ -53,6 +53,6 @@ const serial = new ArduinoDataRead();
 serial.SetConnection();
 
 module.exports.ArduinoData = {
-    List: serial.List,
-    ListB: serial.ListB
+    ListTemperatura: serial.ListTemperatura,
+    ListUmidade: serial.ListUmidade
 }; 

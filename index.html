@@ -12,7 +12,8 @@
     <script src="http://www.chartjs.org/samples/latest/utils.js"></script>
 
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/mediaqueries.css">
 </head>
 
 <body>
@@ -38,7 +39,7 @@
                     <hr>
                     <div class="grafico__conteudo">
                         <p id="umidade_sensor">00%</p>
-                        <p style="color: rgb(255, 0, 0);">Pouca Umidade</p>
+                        <p id="umidade_texto" style="color: rgb(255, 0, 0);">Pouca Umidade</p>
                     </div>
                 </div>
                 <div id="grafico_temperatura" class="grafico__border">
@@ -46,15 +47,7 @@
                     <hr>
                     <div class="grafico__conteudo">
                         <p id="temperatura_sensor">00.0C</p>
-                        <p style="color: rgb(255, 0, 0);">Agradável</p>
-                    </div>
-                </div>
-                <div id="grafico_luminosidade" class="grafico__border">
-                    <h1 class="grafico__titulo">Luminosidade Atual</h1>
-                    <hr>
-                    <div class="grafico__conteudo">
-                        <p>00lm</p>
-                        <p style="color: rgb(255, 0, 0);">Precisa de mais luz</p>
+                        <p id="temperatura_texto" style="color: rgb(255, 0, 0);">Agradável</p>
                     </div>
                 </div>
             </div>
@@ -74,12 +67,12 @@
 <script>
 
     var context = document.getElementById("chart").getContext("2d");
-    context.canvas.width = 1000;
-    context.canvas.height = 300;
+    context.canvas.width = 800;
+    context.canvas.height = 400;
 
     var contextB = document.getElementById("chart-temperatura").getContext("2d");
-    contextB.canvas.width = 1000;
-    contextB.canvas.height = 300;
+    contextB.canvas.width = 800;
+    contextB.canvas.height = 400;
 
     var configuration = {
         type: 'line',
@@ -191,7 +184,7 @@
             return;
         }
         var _lastIndexTemp = this.lastIndexTemp;
-        this.lastIndexTemp = obj.data.length;
+        this.lastIndexTemp = obj.dataTemperatura.length;
         listTemp = obj.data.slice(_lastIndexTemp);
         listTemp.forEach(data => {
             //Máximo de 60 itens exibidos no gráfico
@@ -202,9 +195,17 @@
             chart.data.labels.push(this.time++);
             chart.data.datasets[0].data.push(parseFloat(data));
             chart.update();
+
+            if (obj.orange < 20) {
+                temperatura_texto.innerHTML = 'Frio';
+                temperatura_texto.style.color = '#6dc5cf';
+            } else if (obj.average >= 20) {
+                temperatura_texto.innerHTML = 'Agradável';
+                temperatura_texto.style.color = 'green';
+            }
         });
 
-        var listUmidade = obj.dataB.slice(_lastIndexTemp);
+        var listUmidade = obj.dataUmidade.slice(_lastIndexTemp);
         listUmidade.forEach(data => {
             //Máximo de 60 itens exibidos no gráfico
             if (chartB.data.labels.length == 10 && chartB.data.datasets[0].data.length == 10) {
@@ -214,10 +215,18 @@
             chartB.data.labels.push(this.time++);
             chartB.data.datasets[0].data.push(parseFloat(data));
             chartB.update();
+
+            if (obj.averageB < 50) {
+                temperatura_texto.innerHTML = 'Seco!';
+                temperatura_texto.style.color = 'orange';
+            } else if (obj.averageB >= 50) {
+                temperatura_texto.innerHTML = 'Agradável';
+                temperatura_texto.style.color = 'green';
+            }
         });
 
-        document.getElementById('temperatura_sensor').textContent = obj.average + 'C';
-        document.getElementById('umidade_sensor').textContent = obj.averageB + '%';
+        document.getElementById('temperatura_sensor').textContent = obj.averageTemperatura + 'C';
+        document.getElementById('umidade_sensor').textContent = obj.averageUmidade + '%';
     }
 
     get_data();
